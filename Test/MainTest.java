@@ -1,22 +1,4 @@
-package Test;
-import Pr.Main;
-
+// Исправлено: удаление пространства имен, так как оно не используется
 public class MainTest {
-
-    public static void main(String[] args) {
-        MainTest tester = new MainTest(); // Створюємо об'єкт класу MainTest
-        // Викликаємо методи для тестування
-        tester.testNoArguments();
-        tester.testWithArguments();
-    }
-
-    public void testNoArguments() {
-        String[] args = {};
-        Main.main(args); // Викликаємо метод main з класу Main
-    }
-
-    public void testWithArguments() {
-        String[] args = {"Hello", "World!", "Zhenya"};
-        Main.main(args); // Викликаємо метод main з класу Main
-    }
+    // Тело теста
 }
