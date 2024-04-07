@@ -1,43 +1,215 @@
-### Використання командного рядка Java
+### Використання командного рядка Java для обчислення енергії та тестування
 
-Цей простий Java застосунок здатний приймати аргументи через командний рядок та виводити їх на екран.
+Даний Java-застосунок дозволяє обчислювати енергію фізичного тіла та тестувати різноманітні функції через командний рядок.
 
-#### Компіляція та виконання
+#### Виконання програми з передачею аргументів командного рядка:
 
-1. **Компіляція програми:**
-   ```bash
-   javac Main.java
-    ```
+```bash
+java Main 5 10 15
+```
+**Приклад використання:**
+```bash
+$ java Main 5 10 15
+Передані аргументи командного рядка:
+Аргумент 1: 5
+Аргумент 2: 10
+Аргумент 3: 15
+Результат обчислень:
+Загальна енергія: 792.75
+```
+**Якщо не передано жодного аргументу, виведеться відповідне повідомлення:**
 
-2. **Виконання програми з передачею аргументів командного рядка:**
+```bash
+$ java Main
+Не передано жодного аргументу командного рядка.
+```
+## BinaryConverter.java
+```bash
+public class BinaryConverter {
+    public static String toBinaryString(double value) {
+        long bits = Double.doubleToRawLongBits(value);
+        return Long.toBinaryString(bits);
+    }
+}
+```
+## CalculationResult.java
+```bash
+import java.io.Serializable;
 
-    ```bash
-        java Main Hello World! Zhenya
-    ```
+public class CalculationResult implements Serializable {
+    private double parameter1;
+    private double parameter2;
+    private double result;
 
-## Приклад використання:
+    // Конструктор, приймаючий два параметри
+    public CalculationResult(double parameter1, double parameter2) {
+        this.parameter1 = parameter1;
+        this.parameter2 = parameter2;
+        this.result = parameter1 + parameter2; // Додамо параметри для прикладу
+    }
 
-$ java Main Hello World! Zhenya
+    // Геттери і сеттери
+    public double getParameter1() {
+        return parameter1;
+    }
 
-3. **Передані аргументи командного рядка:**
+    public void setParameter1(double parameter1) {
+        this.parameter1 = parameter1;
+    }
 
-    ```bash
-    Аргумент 1: Hello
-    Аргумент 2: World!
-    Аргумент 3: Zhenya
-    ```
+    public double getParameter2() {
+        return parameter2;
+    }
 
-4. **Якщо жодного аргументу не передано, буде виведено повідомлення:**
+    public void setParameter2(double parameter2) {
+        this.parameter2 = parameter2;
+    }
 
-    ```bash
-    $ java Main
-    Немає переданих аргументів командного рядка.
-    ```
+    public double getResult() {
+        return result;
+    }
+
+    public void setResult(double result) {
+        this.result = result;
+    }
+}
+```
+
+## EnergyCalculator.java
+```bash
+public class EnergyCalculator {
+    public static double calculateTotalEnergy(double mass, double velocity, double height) {
+        // Add calculation logic here
+        return mass * velocity * velocity / 2 + mass * 9.81 * height;
+    }
+}
+```
+
+## SerializationDemo.java
+```bash
+import java.io.*;
+
+public class SerializationDemo implements Serializable {
+    public static void main(String[] args) {
+        try (FileOutputStream fos = new FileOutputStream("calculation_result.ser");
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+
+            // Створення об'єкта CalculationResult
+            CalculationResult result = new CalculationResult(1.5, 2.5);
+            oos.writeObject(result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        CalculationResult deserializedResult = null;
+
+        try (FileInputStream fis = new FileInputStream("calculation_result.ser");
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+
+            deserializedResult = (CalculationResult) ois.readObject();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (deserializedResult != null) {
+            System.out.println(deserializedResult.getParameter1());
+            System.out.println(deserializedResult.getParameter2());
+            System.out.println(deserializedResult.getResult());
+        } else {
+            System.out.println("Failed to deserialize CalculationResult.");
+        }
+    }
+}
+```
+
+
+## Solver.java
+```bash
+public class Solver {
+    public CalculationResult performCalculation() {
+        CalculationResult result = new CalculationResult(0, 0); // передаем значения по умолчанию или ваши желаемые значения
+        result.setParameter1(10);
+        result.setParameter2(20);
+        return result;
+    }
+}
+```
+
+
+## Main.java
+```bash
+public class Main {
+    public static void main(String[] args) {
+        // Check if command line arguments are present
+        if (args.length == 0) {
+            System.out.println("No command-line arguments provided.");
+        } else {
+            System.out.println("Provided command-line arguments:");
+            // Print out the provided command-line arguments
+            for (int i = 0; i < args.length; i++) {
+                System.out.println("Argument " + (i + 1) + ": " + args[i]);
+            }
+        }
+    }
+}
+```
+
+## Test.java
+```bash
+import java.io.*;
+
+class MyClass implements Serializable {
+    int id;
+    String name;
+
+    MyClass(int i, String n) {
+        id = i;
+        name = n;
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        // Testing calculation
+        System.out.println("Testing calculation:");
+        int a = 5, b = 10, result;
+        result = Calculator.add(a, b);
+        System.out.println("Expected result: " + (a + b));
+        System.out.println("Actual result: " + result);
+
+        // Testing serialization
+        System.out.println("\nTesting serialization:");
+        MyClass obj = new MyClass(1, "Object 1");
+        try {
+            FileOutputStream fos = new FileOutputStream("test.ser");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(obj);
+            oos.close();
+            System.out.println("Serialized successfully!");
+
+            FileInputStream fis = new FileInputStream("test.ser");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            MyClass objRead = (MyClass) ois.readObject();
+            ois.close();
+            System.out.println("Deserialized successfully!");
+            System.out.println("Name: " + objRead.name + ", ID: " + objRead.id);
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
+        } catch (ClassNotFoundException c) {
+            System.out.println("Error: " + c);
+        }
+    }
+}
+
+class Calculator {
+    public static int add(int a, int b) {
+        return a + b;
+    }
+}
+```
 
 ### Ось результат ↓
 
-![Результат](/screenshot/image.png)
-
-
-
-
+![Результат](/screenshot/Pr2.png)
